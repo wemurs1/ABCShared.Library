@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Constants/" />
+    <Folder Include="Models/Requests/Identity/" />
+    <Folder Include="Models/Requests/Schools/" />
+    <Folder Include="Models/Requests/Tenancy/" />
+    <Folder Include="Models/Responses/Identity/" />
+    <Folder Include="Models/Responses/Schools/" />
+    <Folder Include="Models/Responses/Tenancy/" />
+    <Folder Include="Wrappers/" />
+  </ItemGroup>
+
+</Project>
