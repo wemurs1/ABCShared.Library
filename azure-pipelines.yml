@@ -1,0 +1,52 @@
+trigger:
+  branches:
+    include:
+      - main  # or the branch you're working with
+
+pool:
+  vmImage: 'windows-latest'
+  
+variables:
+  buildConfiguration: 'Release'
+  packageOutputPath: '$(Build.ArtifactStagingDirectory)/packages'
+
+  # Semantic Versioning Variables
+  majorVersion: 1  # Adjust manually for breaking changes
+  minorVersion: 0  # Adjust manually for new features
+  patchVersion: $[counter(variables['Build.SourceBranchName'], 0)]  # Auto-increment per build on the same branch
+
+  # Compose full version
+  packageVersion: "$(majorVersion).$(minorVersion).$(patchVersion)"
+
+stages:
+  - stage: BuildAndPublish
+    displayName: 'Build, Pack, and Publish NuGet Package'
+    jobs:
+      - job: BuildJob
+        displayName: 'Build, Pack, and Push NuGet Package'
+        steps:
+          - task: NuGetToolInstaller@1
+            displayName: 'Install NuGet'
+          - task: NuGetCommand@2
+            displayName: 'Restore NuGet Packages'
+            inputs:
+              command: 'restore'
+              restoreSolution: '**/*.sln'              
+          - task: DotNetCoreCLI@2
+            displayName: 'Build Project'
+            inputs:
+              command: 'build'
+              projects: '**/*.csproj'
+              arguments: '--configuration $(buildConfiguration)'
+          - task: DotNetCoreCLI@2
+            displayName: 'Pack Project as NuGet Package'
+            inputs:
+              command: 'pack'
+              packagesToPack: '**/*.csproj'
+              arguments: '--configuration $(buildConfiguration) --output $(packageOutputPath) /p:PackageVersion=$(packageVersion)'
+          - task: Push Package to NuGet Feed
+            inputs:
+              command: 'push'
+              packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+              nuGetFeedType: 'internal'
+              publishVstsFeed: 'feed Keys'
