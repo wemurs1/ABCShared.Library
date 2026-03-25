@@ -44,7 +44,7 @@ stages:
               command: 'pack'
               packagesToPack: '**/*.csproj'
               arguments: '--configuration $(buildConfiguration) --output $(packageOutputPath) /p:PackageVersion=$(packageVersion)'
-          - task: Push Package to NuGet Feed
+          - task: Push.Package.to.NuGet.Feed@1
             inputs:
               command: 'push'
               packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
